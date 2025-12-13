@@ -38,6 +38,21 @@ On merge, automation can:
 - assign permissions
 - tag provenance
 
+## Benchmark repos
+
+If you’re proposing a benchmark for a rule, use the naming convention:
+
+- `_benchmark_<RULE>`
+
+Benchmarks should reuse standard metrics from:
+
+- https://github.com/CursorCult/_metrics
+
+Benchmarks should publish results by PR into:
+
+- https://github.com/CursorCult/_results
+  - `rules/<RULE>/<language>/RESULTS.md`
+
 ## What is not possible
 
 - PR that creates a repo directly
