@@ -1,0 +1,14 @@
+# Copy this file to submissions/<project>.yml and fill it in.
+#
+# Notes:
+# - `repo` is the desired org repo name (e.g. "MyPack" or "_my_tooling")
+# - `source` should be a Git URL or HTTPS URL to the existing repository
+# - Keep `license` explicit; do not guess.
+
+project:
+  repo: ""
+  source: ""
+  owner: ""
+  license: ""
+  description: ""
+

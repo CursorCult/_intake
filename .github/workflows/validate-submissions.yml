@@ -1,0 +1,32 @@
+name: Validate intake submissions
+
+on:
+  pull_request:
+    paths:
+      - "submissions/**/*.yml"
+      - "submissions/**/*.yaml"
+      - ".github/workflows/validate-submissions.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Fetch base commit
+        run: git fetch --no-tags --depth=1 origin ${{ github.event.pull_request.base.sha }}
+
+      - name: Install validator dependencies
+        run: python3 -m pip install --disable-pip-version-check --no-cache-dir PyYAML
+
+      - name: Validate submissions
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: python3 scripts/validate_submissions.py
