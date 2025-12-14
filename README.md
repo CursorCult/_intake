@@ -2,72 +2,46 @@
 
 This repo is the public **intake queue** for adding new projects to the CursorCult GitHub organization.
 
-GitHub does **not** allow a pull request whose payload is “a repository.” A PR can only contain **git objects inside an existing repository**.
+To add a new rule pack or benchmark to the org, you submit a metadata file via Pull Request.
 
-However, there are **two correct patterns** that achieve the same outcome.
+## How it works (Automation)
 
-## Pattern 1 — Repository-as-PR (canonical)
+The intake process is fully automated via GitHub Actions.
 
-A repository is submitted by mirroring its contents into a PR against a central repo.
+1.  **Submit**: You open a PR adding `submissions/<name>.yml`.
+2.  **Validate**: CI checks that the YAML is valid, the name is available, and the source repo exists and is public.
+3.  **Approve**: A CursorCult maintainer reviews and merges the PR.
+4.  **Create**: Upon merge to `main`, a workflow automatically:
+    *   Creates the new repository `CursorCult/<name>` in the organization.
+    *   Imports the source code (git history) from your specified `source_url`.
+    *   Sets the repository description and website.
+    *   Adds "provenance" topics/tags linking back to the intake PR.
+    *   Grants you (the submitter) permissions on the new repo (if configured/applicable).
 
-- Contributor creates their own repo, then opens a PR that adds it under `projects/<project-name>/`.
-- After merge, automation creates `CursorCult/<project-name>` and imports contents (optionally preserving history).
+If the automation fails (e.g., name collision after merge), maintainers will resolve it manually.
 
-This is how many large ecosystems handle open intake, but it can create monorepo/registry bloat.
+## Submission Guidelines
 
-## Pattern 2 — Metadata PR (recommended here)
+### 1. Naming
+*   **Rule Packs**: Use PascalCase (e.g., `MyRule`, `NoDeadCode`). Do not use prefixes.
+*   **Benchmarks**: Must be named `_benchmark_<RULE>` (e.g., `_benchmark_TDD`).
 
-The PR contains **no code**, only a declaration (a single YAML file).
-
-Example shape:
+### 2. Format
+Copy `submissions/_template.yml` to `submissions/<your-project>.yml`.
 
 ```yaml
-project:
-  repo: cursorcult-foo
-  source: https://github.com/user/foo
-  owner: user
-  license: MIT
-  description: One-line summary
+name: MyRule
+description: "A short, clear description of what this rule enforces."
+source_url: "https://github.com/username/my-rule-repo.git"
+maintainer: "username"
 ```
 
-On merge, automation can:
-
-- validate metadata
-- create `CursorCult/<repo>`
-- import the source repo
-- assign permissions
-- tag provenance
-
-## Benchmark repos
-
-If you’re proposing a benchmark for a rule, use the naming convention:
-
-- `_benchmark_<RULE>`
-
-Benchmarks should reuse standard metrics from:
-
-- https://github.com/CursorCult/_metrics
-
-Benchmarks should publish results by PR into:
-
-- https://github.com/CursorCult/_results
-  - `rules/<RULE>/<language>/RESULTS.md`
-
-## What is not possible
-
-- PR that creates a repo directly
-- PR against the org itself
-- PR that spans multiple repos
-
-GitHub’s unit of change is **one repo at a time**.
-
-## Submit a project
-
-1. Fork this repo.
-2. Copy `submissions/_template.yml` to `submissions/<your-project>.yml` and fill it in.
-3. Open a PR.
+### 3. Source Repository
+Your source repository must contain a valid `RULE.md` (for rules) or benchmark structure (for benchmarks) at the root.
 
 ## Links
 
 - Cursor (the editor): https://cursor.com
 - Cursor rule file format (`RULE.md`): https://cursor.com/docs/context/rules#rulemd-file-format
+- Benchmark Results: https://github.com/CursorCult/_results
+- Standard Metrics: https://github.com/CursorCult/_metrics
