@@ -35,20 +35,34 @@ def parse_yaml_minimal(path: Path) -> dict:
 
 def validate_schema(doc: dict, path: Path) -> list[str]:
     errors: list[str] = []
-    project = doc.get("project")
-    if not isinstance(project, dict):
-        return ["Missing required mapping: project"]
+    
+    # Support old nested format "project: {...}" for legacy, but prefer flat
+    if "project" in doc:
+        project = doc["project"]
+        required = ["repo", "source", "owner", "license", "description"]
+        for key in required:
+            value = project.get(key)
+            if not isinstance(value, str) or not value.strip():
+                errors.append(f"project.{key} must be a non-empty string")
+        repo = project.get("repo")
+        if isinstance(repo, str) and repo.strip():
+            if "/" in repo or repo.strip() != repo:
+                errors.append("project.repo must be a bare repo name")
+        return errors
 
-    required = ["repo", "source", "owner", "license", "description"]
+    # New flat format
+    required = ["name", "description", "source_url", "maintainer"]
     for key in required:
-        value = project.get(key)
+        value = doc.get(key)
         if not isinstance(value, str) or not value.strip():
-            errors.append(f"project.{key} must be a non-empty string")
+            errors.append(f"Field '{key}' must be a non-empty string")
 
-    repo = project.get("repo")
-    if isinstance(repo, str) and repo.strip():
-        if "/" in repo or repo.strip() != repo:
-            errors.append("project.repo must be a bare repo name (no org/user, no spaces)")
+    name = doc.get("name")
+    if isinstance(name, str) and name.strip():
+        # Validate name format (PascalCase preferred but ensure strict chars)
+        import re
+        if not re.match(r"^[A-Za-z0-9._-]+$", name):
+             errors.append("Field 'name' contains invalid characters. Use letters, numbers, ._-")
 
     return errors
 
