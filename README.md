@@ -45,3 +45,4 @@ Your source repository must contain a valid `RULE.md` (for rules) or benchmark s
 - Cursor rule file format (`RULE.md`): https://cursor.com/docs/context/rules#rulemd-file-format
 - Benchmark Results: https://github.com/CursorCult/_results
 - Standard Metrics: https://github.com/CursorCult/_metrics
+- **Search Registry**: https://cursorcult.github.io/_intake/
