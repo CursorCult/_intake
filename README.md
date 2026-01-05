@@ -23,7 +23,7 @@ If the automation fails (e.g., name collision after merge), maintainers will res
 ## Submission Guidelines
 
 ### 1. Naming
-*   **Rule Packs**: Use PascalCase (e.g., `MyRule`, `NoDeadCode`). Do not use prefixes.
+*   **Rule Packs**: Use PascalCase (e.g., `MyRule`, `YAGNI`). Do not use prefixes.
 *   **Benchmarks**: Must be named `_benchmark_<RULE>` (e.g., `_benchmark_TDD`).
 
 ### 2. Format
